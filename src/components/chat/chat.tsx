@@ -1,6 +1,6 @@
 import React, {Component} from "react";
 import "./chat.css";
-import { Paper, Typography, List, ListItem, Avatar, ListItemText, SnackbarContent, Icon, IconButton, InputBase } from "@material-ui/core";
+import { Paper, SnackbarContent, Icon, IconButton, InputBase } from "@material-ui/core";
 import { Send } from "@material-ui/icons";
 
 interface State {
@@ -40,18 +40,15 @@ export default class Chat extends Component<any, State> {
             <div className="material-chat">
                 <div>
                     {this.state.messages && this.state.messages.map((message, key) => {
-                        const author: string = message.author === "-1" ? "Server" : "You";
                         return <SnackbarContent
                             key={key}
                             className={`chat ${message.author === "-1" ? "" : "right"}`}
                             aria-describedby="client-snackbar"
                             message={
-                                <>
-                                    <span id="client-snackbar" className="message">
-                                        <Icon className="icon iconVariant" />
-                                        {message.data}
-                                    </span>
-                                </>
+                                <span id="client-snackbar" className="message">
+                                    <Icon className="icon iconVariant" />
+                                    {message.data}
+                                </span>
                             } />
                     })}
                 </div>
