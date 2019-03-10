@@ -27,7 +27,7 @@ jobs:
       - run:
           name: Deploy over SSH
           command: |
-            ssh -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST "./deploy_ufd19_client.sh mallau.net:8080/ufd19_react"
+            ssh -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST "./deploy_ufd19_react.sh mallau.net:8080/ufd19_react"
 workflows:
   version: 2
   build_and_deploy:
