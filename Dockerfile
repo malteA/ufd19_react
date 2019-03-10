@@ -1,6 +1,6 @@
-FROM node:10-alpine as build
+FROM mhart/alpine-node:10 as build
 COPY . .
-RUN npm install
+RUN npm ci --prod
 RUN npm run build
 
 FROM nginx:1.15-alpine
