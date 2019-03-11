@@ -9,7 +9,8 @@ interface State {
     history: any[];
 }
 export default class Chat extends Component<any, State> {
-    private ws: WebSocket = new WebSocket(`ws://${window.location.hostname}:4000`);
+
+    private ws: WebSocket;
 
     public constructor(prop: any) {
         super(prop);
@@ -18,6 +19,13 @@ export default class Chat extends Component<any, State> {
             messages: [],
             history: []
         }
+
+        let protocol: string = 'ws://';
+        if (window.location.protocol === 'https:') {
+            protocol = 'wss://';
+        }
+
+        this.ws = new WebSocket(`${protocol}${window.location.hostname}/wss`);
     }
 
     public async componentDidMount(): Promise<void> {
