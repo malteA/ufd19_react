@@ -8,7 +8,7 @@
     max-width: 70%;
 }
 .material-chat .chat .message {
-    white-space: pre;
+    white-space: pre-line;
 }
 .material-chat .chat.right {
     margin-left: auto;
