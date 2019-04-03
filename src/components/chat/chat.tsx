@@ -20,27 +20,22 @@ export default class Chat extends Component<any, State> {
             history: []
         }
 
-        let protocol: string = 'ws://';
-        if (window.location.protocol === 'https:') {
-            protocol = 'wss://';
-        }
-
-        this.ws = new WebSocket(`${protocol}${window.location.hostname}/wss`);
+        this.ws = this.registerWebsocket();
     }
-
+    
     public async componentDidMount(): Promise<void> {
-        this.ws.onmessage = (event: MessageEvent) => {
-            const evt: any = JSON.parse(event.data);
-            const messages: string[] = this.state.messages;
-            if (evt.type === "history") {
-                return this.setState({history: evt.data});
-            }
-            messages.push(evt);
-            this.setState({messages}, () => {
-                const scrollHeight: number = document.body.scrollHeight;
-                window.scrollTo(0, scrollHeight);
-            })
-        }
+        // this.ws.onmessage = (event: MessageEvent) => {
+        //     const evt: any = JSON.parse(event.data);
+        //     const messages: string[] = this.state.messages;
+        //     if (evt.type === "history") {
+        //         return this.setState({history: evt.data});
+        //     }
+        //     messages.push(evt);
+        //     this.setState({messages}, () => {
+        //         const scrollHeight: number = document.body.scrollHeight;
+        //         window.scrollTo(0, scrollHeight);
+        //     })
+        // }
     }
 
     public render(): JSX.Element {
@@ -54,7 +49,6 @@ export default class Chat extends Component<any, State> {
                             aria-describedby="client-snackbar"
                             message={
                                 <span id="client-snackbar" className="message">
-                                    <Icon className="icon iconVariant" />
                                     {message.data}
                                 </span>
                             } />
@@ -64,11 +58,15 @@ export default class Chat extends Component<any, State> {
                     <Paper>
                         <InputBase
                             placeholder="message"
-                            multiline={true}
+                            multiline={false}
                             onChange={this.handleChangeMessage}
+                            onKeyPress={this.handleMessageEnter}
                             value={this.state.message}
                             className="text-field" />
-                        <IconButton className="send-blue" aria-label="send" onClick={this.handleSendMessage}>
+                        <IconButton
+                            className="send-blue"
+                            aria-label="send"
+                            onClick={this.handleSendMessage}>
                             <Send />
                         </IconButton>
                     </Paper>
@@ -79,6 +77,12 @@ export default class Chat extends Component<any, State> {
 
     private handleChangeMessage = (evt: React.ChangeEvent<any>) => {
         this.setState({message: evt.target.value});
+    }
+
+    private handleMessageEnter = (evt: any) => {
+        if (evt.charCode === 13) {
+            this.handleSendMessage();
+        }
     }
 
     private handleSendMessage = () => {
@@ -92,5 +96,31 @@ export default class Chat extends Component<any, State> {
         this.ws.send(inputText);
         messages.push(message);
         this.setState({messages, message: ""})
+    }
+
+    private registerWebsocket = (): WebSocket => {
+        let protocol: string = 'ws://';
+        if (window.location.protocol === 'https:') {
+            protocol = 'wss://';
+        }
+        
+        const webSocket: WebSocket = new WebSocket(`${protocol}${window.location.hostname}:4000`);
+        
+        webSocket.onmessage = (event: MessageEvent) => {
+            const evt: any = JSON.parse(event.data);
+            const messages: string[] = this.state.messages;
+            if (evt.type === "history") {
+                return this.setState({history: evt.data});
+            }
+            messages.push(evt);
+            this.setState({messages}, () => {
+                const scrollHeight: number = document.body.scrollHeight;
+                window.scrollTo(0, scrollHeight);
+            })
+        };
+
+        webSocket.onclose = () => setTimeout(() => this.ws = this.registerWebsocket(), 500);
+
+        return webSocket;
     }
 }
