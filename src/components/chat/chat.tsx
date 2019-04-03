@@ -104,7 +104,7 @@ export default class Chat extends Component<any, State> {
             protocol = 'wss://';
         }
         
-        const webSocket: WebSocket = new WebSocket(`${protocol}${window.location.hostname}:4000`);
+        const webSocket: WebSocket = new WebSocket(`${protocol}${window.location.hostname}/wss`);
         
         webSocket.onmessage = (event: MessageEvent) => {
             const evt: any = JSON.parse(event.data);
